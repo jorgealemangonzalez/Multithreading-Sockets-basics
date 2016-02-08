@@ -6,6 +6,11 @@
 #include <time.h>
 #include <wait.h>
 #include <stdlib.h>
+
+/*Questions:
+	1) Can we use printf to print the ellapsed time?
+	2) Why the program doesnt work with the provided text files?
+*/
 int readSplit(int fin, char* buff, char s, int maxlen) {
     int i = 0;
     int rlen = 1;
