@@ -7,7 +7,10 @@
 #include <wait.h>
 #include <stdlib.h>
 
-
+/*Questions:
+	1) Can we use printf to print the ellapsed time?
+	2) Why the program doesnt work with the provided text files?
+*/
 int readSplit(int fin, char* buff, char s, int maxlen) {
     int i = 0;
     int rlen = 1;
@@ -31,10 +34,11 @@ int main(int argc, char *argv[]) {
     long mtime, seconds, useconds;    
     gettimeofday(&start, NULL);
     
-	char comand[100]; /* Variable que almacena el comando escrito por la 
+	char comand[20]; /* Variable que almacena el comando escrito por la 
 	                   * entrada estandar. */
     write(1, "If you want to exit type byebye\n>", strlen("If you want to exit type byebye\n>"));
-    while (read(0, comand, 100) != 0) {
+    while (readSplit(0, comand, '\n', 20) != -1) {
+	
         int returnStatus;
         struct timeval moment;
 
@@ -101,26 +105,26 @@ int main(int argc, char *argv[]) {
 		                strcat(buff, ".");
 		                strcat(buff, extension);
 
-		                pid_t id = fork();//mamentaneo para ejecutar el cp
+		                pid_t id2 = fork();//mamentaneo para ejecutar el cp
 
-		                if (id == 0) {
+		                if (id2 == 0) {
 		                    execlp("cp", "cp", buff, folder, (char *) NULL);
 		                    exit(0);
 		                }
-		                waitpid(id, &returnStatus, 0);
+		                waitpid(id2, &returnStatus, 0);
 
 		            }
 
 		        }
 		        close(fin);
-		        id1 = fork();
+		        pid_t id3 = fork();
 		        /* Borramos el fichero de apoyo. */
-		        if (id1 == 0) {
+		        if (id3 == 0) {
 		            execlp("rm", "rm", "temporal.txt", (char *) NULL);
 		            
 		            exit(0);
 		        }
-		        waitpid(id1, &returnStatus, 0);
+		        waitpid(id3, &returnStatus, 0);
 
 
 
