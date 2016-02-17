@@ -22,7 +22,23 @@ int check_anagram(char a[], char b[])
    return 1;
 }
 
-
+int readSplit(int fin, char* buff, char s, int maxlen) {
+    int i = 0;
+    int rlen = 1;
+    char c = 'a';
+    while (c != s && rlen == 1 && i < maxlen) {
+        rlen = read(fin, &c, 1);
+        if (c != s && rlen == 1) {
+            buff[i] = c;
+            i++;
+        }
+    }
+    if (i < maxlen) {
+        buff[i] = '\0';
+        if (rlen == 1) return i;
+        else return -1;
+    } else return -1;
+}
 
 int main()
 {
