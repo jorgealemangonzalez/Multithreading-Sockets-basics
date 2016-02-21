@@ -16,7 +16,6 @@ struct arg_struct{
 };
 
 char words[120000][50];
-    
 int check_anagram(char a[], char b[])
 {
    int first[26] = {0}, second[26] = {0}, c = 0;
@@ -75,24 +74,19 @@ int main(){
     pthread_t tid[50] ;
 
     while(readSplit(f, words[i], '\n', 50) != -1){
-        if(strlen(words[i]) < len) { 
-			continue;
-		}
+        if(strlen(words[i]) < len)continue;
         if(strlen(words[i]) != strlen(words[i-1])){
             struct arg_struct args;
             args.id_init = lasti;
             args.id_fin = i;
             lasti = i;
-            if (sizeof(args.id_init) != 0 && sizeof(args.id_fin) != 0) {
-				if(pthread_create(&tid[thread_id], NULL,calculateAnagrams,(void *)&args)){
-					printf("Error creatign the thread\n");
-					return 1;
-				}
-			}
+            if(pthread_create(&tid[thread_id], NULL,calculateAnagrams,(void *)&args)){
+                printf("Error creatign the thread\n");
+                return 1;
+            }
             thread_id++;
-            ++i;
         }
-        
+        else ++i;
     }
     for(i = 0 ; i < thread_id ; ++i)
         if(pthread_join(tid[i],NULL))
