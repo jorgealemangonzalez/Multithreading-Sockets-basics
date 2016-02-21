@@ -80,11 +80,13 @@ int main(){
             args.id_init = lasti;
             args.id_fin = i;
             lasti = i;
+            printf("%d", i);
             if(pthread_create(&tid[thread_id], NULL,calculateAnagrams,(void *)&args)){
                 printf("Error creatign the thread\n");
                 return 1;
             }
             thread_id++;
+            i++;
         }
         else ++i;
     }
