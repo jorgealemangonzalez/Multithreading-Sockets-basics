@@ -63,7 +63,7 @@ void* calculateAnagrams(void *arguments){
             if( check_anagram(words[x],words[y]))
                 printf("%s-%s\n",words[x],words[y]);
 }
-int main(int argc, char *argv[]){
+int main(){
     struct timeval start, end;
     long mtime, seconds, useconds; 
     gettimeofday(&start, NULL);
