@@ -11,6 +11,11 @@
 #define TRUE 1
 #define FALSE 0
 
+struct anagram{
+	char word1[50];
+	char word2[50];
+}anagrams[30000];
+
 int check_anagram(char a[], char b[])
 {
    int first[26] = {0}, second[26] = {0}, c = 0;
@@ -51,22 +56,41 @@ int readSplit(int fin, char* buff, char s, int maxlen) {
 }
 
 int main(){
-    printf("hol");
+	struct timeval start, end;
+    long mtime, seconds, useconds; 
+    gettimeofday(&start, NULL);
+
     char words[120000][50];
     int len = 5;
     int i = 0;
-    printf("hol");
     int f = open("US.txt", O_RDONLY);
-    printf("hol");
     while(readSplit(f, words[i], '\n', 50) != -1){
         if(strlen(words[i]) < len)continue;
         else ++i;
     }
-    int x , y ;
+    int x , y;
+    
+	int anagrams_id = 0;
     for(x = 0 ;  x < i ; ++x)
         for(y = x+1 ; y < i && strlen(words[x]) == strlen(words[y]);++y)
             if( check_anagram(words[x],words[y]))
-                printf("%s-%s\n",words[x],words[y]);
+            {
+            	strcpy(anagrams[anagrams_id].word1,words[x]);
+            	strcpy(anagrams[anagrams_id].word2,words[y]);
+            	anagrams_id++;
+            }
+    for(i = 0;i < anagrams_id;++i){
+    	printf("\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
+    }
+    printf("Total:%d\n",anagrams_id);
+    
+    gettimeofday(&end, NULL);
+    seconds  = end.tv_sec  - start.tv_sec;
+    useconds = end.tv_usec - start.tv_usec;
+
+    mtime = ((seconds) * 1000 + useconds/1000.0) + 0.5;
+
+    printf("Elapsed time: %ld milliseconds\n", mtime);
 }
 
 
