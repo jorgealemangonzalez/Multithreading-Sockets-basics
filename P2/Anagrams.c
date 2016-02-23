@@ -21,17 +21,20 @@ int check_anagram(char a[], char b[])
    int first[26] = {0}, second[26] = {0}, c = 0;
  
    while (a[c] != '\0') {
-      first[a[c]-'a']++;
+      int i = a[c]-'a';
+      if(i >= 0 && i < 26)first[a[c]-'a']++;
       c++;
    }
  
    c = 0;
    while (b[c] != '\0') {
-      second[b[c]-'a']++;
+      int i = b[c]-'a';
+      if(i >= 0 && i < 26)second[b[c]-'a']++;
       c++;
    }
  
    for (c = 0; c < 26; c++) {
+      
       if (first[c] != second[c])
          return 0;
    }
@@ -63,7 +66,7 @@ int main(){
     char words[120000][50];
     int len = 5;
     int i = 0;
-    int f = open("US.txt", O_RDONLY);
+    int f = open("USpetit.txt", O_RDONLY);
     while(readSplit(f, words[i], '\n', 50) != -1){
         if(strlen(words[i]) < len)continue;
         else ++i;
@@ -72,9 +75,10 @@ int main(){
     
 	int anagrams_id = 0;
     for(x = 0 ;  x < i ; ++x)
-        for(y = x+1 ; y < i && strlen(words[x]) == strlen(words[y]);++y)
+        for(y = x+1 ; y < i && ((int)strlen(words[x])) != ((int)strlen(words[y]))+1;++y)
             if( check_anagram(words[x],words[y]))
             {
+                //printf("Anagrama %d\n",anagrams_id);
             	strcpy(anagrams[anagrams_id].word1,words[x]);
             	strcpy(anagrams[anagrams_id].word2,words[y]);
             	anagrams_id++;
