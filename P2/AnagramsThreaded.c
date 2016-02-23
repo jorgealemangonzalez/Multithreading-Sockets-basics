@@ -13,6 +13,7 @@
 struct arg_struct{
     int id_init;
     int id_fin;
+    int thread_id;
 };
 struct anagram{
 	char word1[50];
@@ -69,6 +70,11 @@ void* calculateAnagrams(void *arguments){
         for(y = x+1 ; y < args->id_fin;++y)
             if( check_anagram(words[x],words[y])){
             	pthread_mutex_lock(&lock);
+            	//...Ver que thread esta imprimiendo
+            	char a[10];
+            	sprintf(a,"  thread : %d",args->thread_id);
+            	strcat(words[x],a);
+            	//...
             	strcpy(anagrams[anagrams_id].word1,words[x]);
 	        	strcpy(anagrams[anagrams_id].word2 , words[y]);
             	anagrams_id++;
@@ -93,17 +99,35 @@ int main(){
 	int exit = 0;
     while(!exit){
     	if(readSplit(f, words[i], '\n', 50) == -1)exit = 1;
-        if(!exit && strlen(words[i]) < len)continue;
+        if(!exit && strlen(words[i]) <= len)continue;
+        else if(!exit){//miramos si la palabra tiene basura
+            int ptr = 0,delete_word = 0;
+            while(words[i][ptr] != '\0'){
+                if(words[i][ptr] < 'a' || words[i][ptr] > 'z'){
+                    printf("fake word: %s\n",words[i]);
+                    delete_word = 1;
+                    break;
+                }
+                ++ptr;
+            }
+            if(delete_word)continue;//si la palabra tiene caracteres extraños no la guardamos
+        }
         if(i == 0){
         	++i;
         	continue;
     	}
-        if(((int)strlen(words[i])) == ((int)strlen(words[i-1]))+1){
-            struct arg_struct args;
-            args.id_init = lasti;
-            args.id_fin = i;
+        
+    	
+    	
+        if(exit || ((int)strlen(words[i])) != ((int)strlen(words[i-1]))){
+            if(!exit)printf("ini: %d %s , fin: %d %s\n",lasti,words[lasti],i,words[i]);
+            struct arg_struct *args;
+            args = (struct arg_struct *)malloc(sizeof(struct arg_struct));
+            args->thread_id = thread_id;
+            args->id_init = lasti;
+            args->id_fin = i;
             lasti = i;
-            if(pthread_create(&tid[thread_id], NULL,calculateAnagrams,(void *)&args)){
+            if(pthread_create(&tid[thread_id], NULL,calculateAnagrams,(void *)args)){
                 printf("Error creatign the thread\n");
                 return 1;
             }

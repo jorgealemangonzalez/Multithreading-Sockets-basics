@@ -68,14 +68,42 @@ int main(){
     int i = 0;
     int f = open("USpetit.txt", O_RDONLY);
     while(readSplit(f, words[i], '\n', 50) != -1){
-        if(strlen(words[i]) < len)continue;
-        else ++i;
+        if(strlen(words[i]) <= len)continue;
+        else{
+            int ptr = 0,delete_word = 0;
+            while(words[i][ptr] != '\0'){
+                if(words[i][ptr] < 'a' || words[i][ptr] > 'z'){
+                    delete_word = 1;
+                    break;
+                }
+                ++ptr;
+            }
+            if(delete_word)continue;//si la palabra tiene caracteres extraños no la guardamos
+            ++i;
+        }
     }
     int x , y;
     
 	int anagrams_id = 0;
     for(x = 0 ;  x < i ; ++x)
-        for(y = x+1 ; y < i && ((int)strlen(words[x])) != ((int)strlen(words[y]))+1;++y)
+        for(y = x+1 ; y < i && ((int)strlen(words[x])) == ((int)strlen(words[y]));++y)
+        {
+            /*
+            if(((int)strlen(words[x])) != ((int)strlen(words[y])))
+            {
+                //comprobamos si es basura o un cambio real
+                int ptr1=0 , so_continue = 0;
+                while(words[x][ptr1] != '\0'){
+                    if(words[x][ptr1] < 'a' || words[x][ptr1] > 'z')
+                        so_continue = 1,break;// Si hay caracter raro continuamos porque no es un cambio de longitud
+                }
+                ptr1 = 0
+                while(words[y][ptr1] != '\0'){
+                    if(words[y][ptr1] < 'a' || words[y][ptr1] > 'z')
+                        so_continue = 1,break;
+                }
+                if(!so_continue)break;
+            }*/
             if( check_anagram(words[x],words[y]))
             {
                 //printf("Anagrama %d\n",anagrams_id);
@@ -83,6 +111,8 @@ int main(){
             	strcpy(anagrams[anagrams_id].word2,words[y]);
             	anagrams_id++;
             }
+        }    
+            
     for(i = 0;i < anagrams_id;++i){
     	printf("\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
     }
