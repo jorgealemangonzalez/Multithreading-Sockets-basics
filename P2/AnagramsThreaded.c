@@ -71,20 +71,12 @@ void* calculateAnagrams(void *arguments){
         for(y = x+1 ; y < args->id_fin;++y)
             if( check_anagram(words[x],words[y])){
             	pthread_mutex_lock(&lock);
-            	//...Ver que thread esta imprimiendo
-            	/*
-            	char a[10];
-            	sprintf(a,"  thread : %d",args->thread_id);
-            	strcat(words[y],a);
-            	*/
-            	//...
             	strcpy(anagrams[anagrams_id].word1,words[x]);
 	        	strcpy(anagrams[anagrams_id].word2 , words[y]);
             	anagrams_id++;
             	pthread_mutex_unlock(&lock);
             }
-	//printf("Thread %d, should terminate in %d but terminate x:%d , y: %d----------------------------------------------------------\n",args->thread_id,args->id_fin,x,y);
-
+    free(args);
 }
 int main(){
 	if( pthread_mutex_init(&lock,NULL) != 0){
@@ -108,7 +100,6 @@ int main(){
             int ptr = 0,delete_word = 0;
             while(words[i][ptr] != '\0'){
                 if(words[i][ptr] < 'a' || words[i][ptr] > 'z'){
-                    printf("fake word: %s\n",words[i]);
                     delete_word = 1;
                     break;
                 }
@@ -124,8 +115,6 @@ int main(){
     	
     	
         if(exit || ((int)strlen(words[i])) != ((int)strlen(words[i-1]))){
-            //if(!exit)printf("thread: %dini: %d %s , fin: %d %s\n",thread_id,lasti,words[lasti],i,words[i]);
-            //A causa del exit no imprime el ultimo intervalo , pero si que lo calcula
             struct arg_struct *args;
             args = (struct arg_struct *)malloc(sizeof(struct arg_struct));
             args->thread_id = thread_id;
@@ -150,10 +139,15 @@ int main(){
         
     
     //print anagrams
+    FILE *fp;
+    fp=fopen("TheThreadedOutput.txt", "w");
 
     for(i = 0;i < anagrams_id;++i){
-    	printf("\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
+    	fprintf(fp , "\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
     }
+    
+    
+    fclose(fp);
     
     //destruimos el lock
     pthread_mutex_destroy(&lock);

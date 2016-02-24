@@ -69,12 +69,12 @@ int main(){
     int f = open("US.txt", O_RDONLY);
     while(readSplit(f, words[i], '\n', 50) != -1){
         if(strlen(words[i]) <= len)continue;
-        else{
+        else{                                                   //miramos si la palabra tiene carácteres extraños
             int ptr = 0,delete_word = 0;
             while(words[i][ptr] != '\0'){
                 if(words[i][ptr] < 'a' || words[i][ptr] > 'z'){
                     delete_word = 1;
-                    printf("Fake word: %s\n",words[i]);
+                    //printf("Fake word: %s\n",words[i]);
                     break;
                 }
                 ++ptr;
@@ -113,12 +113,15 @@ int main(){
             	anagrams_id++;
             }
         }    
-            
+    FILE *fp;
+    fp=fopen("NonThreadedOutput.txt", "w");
+    
     for(i = 0;i < anagrams_id;++i){
-    	printf("\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
+    	fprintf(fp,"\"%s-%s\" are anagrams of %d letters\n",anagrams[i].word1,anagrams[i].word2,(int)strlen(anagrams[i].word2));
     }
     printf("Total:%d\n",anagrams_id);
     
+    fclose(fp);
     gettimeofday(&end, NULL);
     seconds  = end.tv_sec  - start.tv_sec;
     useconds = end.tv_usec - start.tv_usec;

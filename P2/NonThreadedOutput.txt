@@ -7231,5 +7231,3 @@
 "ureteroneopyelostomy-ureteropyeloneostomy" are anagrams of 20 letters
 "encephalomeningitides-meningoencephalitides" are anagrams of 21 letters
 "ureteroneopyelostomies-ureteropyeloneostomies" are anagrams of 22 letters
-Total:7233
-Elapsed time: 115637 milliseconds
