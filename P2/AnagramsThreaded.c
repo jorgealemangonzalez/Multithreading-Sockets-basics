@@ -93,7 +93,7 @@ int main(){
     
     int len = 5;
     int i = 0 , lasti = 0;
-    int f = open("USpetit.txt", O_RDONLY);
+    int f = open("US.txt", O_RDONLY);
     int thread_id = 0;
     pthread_t tid[50] ;
 	int exit = 0;

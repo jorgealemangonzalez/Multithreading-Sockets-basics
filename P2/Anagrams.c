@@ -66,7 +66,7 @@ int main(){
     char words[120000][50];
     int len = 5;
     int i = 0;
-    int f = open("USpetit.txt", O_RDONLY);
+    int f = open("US.txt", O_RDONLY);
     while(readSplit(f, words[i], '\n', 50) != -1){
         if(strlen(words[i]) <= len)continue;
         else{
