@@ -74,6 +74,7 @@ int main(){
             while(words[i][ptr] != '\0'){
                 if(words[i][ptr] < 'a' || words[i][ptr] > 'z'){
                     delete_word = 1;
+                    printf("Fake word: %s\n",words[i]);
                     break;
                 }
                 ++ptr;
