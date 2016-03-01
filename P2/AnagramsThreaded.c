@@ -93,7 +93,7 @@ int main(){
     int thread_id = 0;
     pthread_t tid[50] ;
 	int exit = 0;
-    while(!exit){
+    while(!exit){                                               //utilizamos la variable exit para poder buscar anagramas en la última serie de palabras
     	if(readSplit(f, words[i], '\n', 50) == -1)exit = 1;
         if(!exit && strlen(words[i]) <= len)continue;
         else if(!exit){//miramos si la palabra tiene basura
