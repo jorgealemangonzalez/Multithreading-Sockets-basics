@@ -44,7 +44,8 @@ void transfer(Account* from, Account* to, double amount) {
 
 double bankInit() {
 	double sum = 0;
-	for(int i=0;i<N;i++) {
+	int i;
+	for(i=0;i<N;i++) {
 		bank[i].id = i;
 		bank[i].balance = 10000;
 		bank[i].bInUse = false;
@@ -74,7 +75,8 @@ int main(int argc, char *argv[])
 {
 	time_t t;
 	srand((unsigned) time(&t));
-	for(int i = 0 ; i < N ; ++i)
+	int i;
+	for(i = 0; i < N ; ++i)
 		if( pthread_mutex_init(&lock[i],NULL) != 0){
 			printf("Error creating the lock\n");
 		}
@@ -84,11 +86,11 @@ int main(int argc, char *argv[])
 
 	pthread_t tid[NThreads]; /* the thread identifiers */
     //tid = (pthread_t *)malloc(NThreads * sizeof(pthread_t));
-    for(int i = 0 ; i < NThreads ; ++i){
+    for(i = 0 ; i < NThreads ; ++i){
     	pthread_create(&tid[i], NULL,randomMoves,(void *)NULL);
     }
     int e = 0;
-	for(int i = 0 ; i < NThreads ; ++i)
+	for(i = 0 ; i < NThreads ; ++i)
         if(pthread_join(tid[i],NULL))
         {
             printf("Error joining thread\n");
@@ -96,7 +98,7 @@ int main(int argc, char *argv[])
         }
     
     double sumEnd = 0;
-	for(int i=0;i<N;i++) {
+	for(i=0;i<N;i++) {
 		printf("Account %d balance : %f\n",i,bank[i].balance);
 		sumEnd += bank[i].balance;
 	}
