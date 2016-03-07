@@ -28,13 +28,19 @@ void deposit(Account* acc, double amount) {
 
 	/* AFEGIR codi de sincronitzacio d'entrada */
 	/* ... */
-
-
+	
+	pthread_mutex_lock(&acc->mutex);
+	while(acc->bInUse)pthread_cond_wait(&acc->freeAcc,&acc->mutex);
+	acc->bInUse = true;
+	pthread_mutex_unlock(&acc->mutex);
 	// Deposit del thread 
 	usleep(10);
 	acc->balance += amount;
-
-
+	
+	acc->bInUse = false;
+	pthread_cond_signal(&acc->freeAcc);
+	
+	
 	/* AFEGIR codi de synchronitzacio de sortida */
 	/* ... */
 }

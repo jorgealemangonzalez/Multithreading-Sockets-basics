@@ -15,19 +15,26 @@ long mtime, seconds, useconds;
 pthread_mutex_t mutex;   // lock to use/modify vars
 pthread_cond_t  waitBarber; 
 pthread_cond_t  waitCustomers; 
+pthread_cond_t  waitCutting; 
 int waiting = 0;
-
+int customer_cutting;
 void cutHair() { 
-	printf("Barber: I'm cutting Hair\n"); 
+	pthread_cond_wait(&waitCutting,&mutex);
+	pthread_mutex_unlock(&mutex);
+	printf("Barber: I'm cutting Hair to customer %d\n",customer_cutting); 
 	usleep(rand()%1000+100000); 
 }
 
 void receiveHairCut(int id) {
+	customer_cutting = id;
+	pthread_cond_signal(&waitCutting);
 	printf("Customer %d: and I'm receiving a hair cut\n",id);
+
 	usleep(rand()%1000+100000); 
 }
 
 void* barberThread( void* param ) {
+	
 	printf("Barber: I'll wait for customers\n");
 	while(true) {
 		pthread_mutex_lock(&mutex);
@@ -37,8 +44,8 @@ void* barberThread( void* param ) {
 
 		printf("Barber: hello customer\n");
 		pthread_cond_signal(&waitBarber);
-		pthread_mutex_unlock(&mutex);
-
+		
+		
 		cutHair();
 
 		printf("Barber: I have finished\n"); 
@@ -46,7 +53,8 @@ void* barberThread( void* param ) {
 }
 
 void* customerThread( void* param ) {
-	int id = -1;
+	int id = *((int*)param);													//////////////////////////////////
+	free(param);																//////////////////////////////////
 	pthread_mutex_lock(&mutex);
 	if(waiting < NChairs) {
 		printf("Customer %d: arrived and I'll stay\n",id);
@@ -74,7 +82,7 @@ int main(int argc, char *argv[])
 	if (pthread_mutex_init(&mutex, NULL) != 0) { printf("mutex error\n"); }
 	if (pthread_cond_init(&waitBarber, NULL) != 0) { printf("error initializing condition\n"); }
 	if (pthread_cond_init(&waitCustomers, NULL) != 0) { printf("error initializing condition\n"); }
-
+	if (pthread_cond_init(&waitCutting, NULL) != 0) { printf("error initializing condition\n"); }
 
 
 	pthread_t* tid;          					/* the thread identifiers */
@@ -84,12 +92,17 @@ int main(int argc, char *argv[])
 	pthread_create(&tid[i], NULL, barberThread, NULL);
 
 
+    int *id;
     for(i=0;i<NThreads/2;i++) {
-        pthread_create(&tid[i], NULL, customerThread, NULL);
-    }
+    	id = (int*)malloc(sizeof(int));
+    	*id = i;
+        pthread_create(&tid[i], NULL, customerThread, (void*)id);
+    }																	//////////////////////////////////
     for(i=NThreads/2;i<NThreads;i++) {
     	usleep(100000 + rand()%100000);
-        pthread_create(&tid[i], NULL, customerThread, NULL);
+    	id = (int*)malloc(sizeof(int));										//////////////////////////////////
+        *id = i;
+        pthread_create(&tid[i], NULL, customerThread, (void*)id);				//////////////////////////////////
     }
 
 
