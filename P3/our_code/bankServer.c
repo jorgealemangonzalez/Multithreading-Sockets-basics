@@ -74,8 +74,9 @@ void error(const char *msg)
 void* serveTransaction(void *args){
 	struct transaction *t = (struct transaction *) args;
 	transfer(&bank[t->inAcc],&bank[t->toAcc],t->amount);
-	
+	printf("Transaction done\n");
     if (write(t->sockfd,"Transaction finished",sizeof("Transaction finished") < 0)) error("ERROR writing to socket");
+    printf("Writing in socket successful\n");
     close(t->sockfd);
     free(t);
     
@@ -134,31 +135,38 @@ int main(int argc, char *argv[])
         }
     */
     pthread_t tid[N];
+    bool used_tid[N];
+    for(i = 0 ; i < N ; ++i)
+        used_tid[i] = false;
     //........................SOCKETS CONNECTION ...............................
-    
     
     
     
    struct transaction *order;
     
-    while(newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen) >= 0){    // blocks until client connects
-    
+    while((newsockfd = accept(sockfd, (struct sockaddr *) &cli_addr,  &clilen)) >= 0){    // blocks until client connects                         //THE ERROR IS THAT ACCEPT FUNCTION RETURNS 0
+        printf("New connexion\n");
         
         bzero(buffer,256);
-        
+        //n = write(0,"hola\n\n",strlen("hola\n\n"));
         n = read(newsockfd,buffer,255);
         if (n < 0) error("ERROR reading from socket");
-        
+        else printf("Socket info: %s\n",buffer);
         order =(struct transaction *)malloc(sizeof(struct transaction)); 
         
         sscanf(buffer,"T%02d%02d%02lf" , &(order->inAcc) , &(order->toAcc) , &(order->amount) );
         order->sockfd = newsockfd;
+        if(order->amount == 0){
+            free(order);
+            break;
+        }
+        used_tid[order->inAcc] = true;
         pthread_create(&tid[order->inAcc], NULL,serveTransaction,(void *)order);
         
     } 
     if (newsockfd < 0)  error("ERROR on accept");
     for(i = 0 ; i < N ; ++i)
-        if(pthread_join(tid[i],NULL))
+        if(used_tid[i] && pthread_join(tid[i],NULL))
             error("Error joining thread");
     
     close(sockfd);

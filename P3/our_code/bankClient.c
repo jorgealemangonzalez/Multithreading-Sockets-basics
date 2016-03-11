@@ -45,24 +45,25 @@ int main(int argc, char *argv[])
     printf("Enter :(inAccount) (toAccount) (amount)\n");
     scanf("%02d %02d %02lf",&inAcc,&toAcc,&amount);
     sprintf(buffer,"T%02d%02d%02.2f",inAcc,toAcc,amount) ;
-
+    printf("Operacion recivida: %s\n",buffer);
     
     //....................................................................
     // Client step 2) call to Connect
     int retcon = connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)); 
-    if(retcon < 0) error("ERROR connecting");
+    if(retcon < 0) error("ERROR connecting\n");
+    else printf("Connexion to server successful\n");
 
     sprintf(buffer,"%s\n",buffer);  // when sending to a web server this second '\n' is important
     n = write(sockfd,buffer,strlen(buffer));  
-    if (n < 0) error("ERROR writing to socket");
-    
+    if (n < 0) error("ERROR writing to socket\n");
+    else printf("Writing on socket successful\n");
     bzero(buffer,N);
 
     // Deal with response here....................................................................
-    
     n = read(sockfd,buffer,255);
+    printf("I get something from server\n");
     if (n < 0) error("ERROR reading from socket");
-    printf("%s",buffer);
+    printf("%s\n",buffer);
 
     // If you want to write a fixed size char length to a stream:
     float numf = 2.2;
